@@ -13,4 +13,4 @@ Patterns data are stored in a sqlite3 database.
 The project can be built with Eclipse 2023 CDT, including pkg-config in the build command with gtk3, gtksourceview3 and sqlite3 libraries. Eclipse project and settings files are included for a faster start up. 
 You will need the gtk3 and gtksourceview development libraries installed in your system and sqlite3.
 
-
+![Main window screenshot](https://github.com/tclsteixeira/design-patterns-viewer/dpviewergtk_001_2023-12-26_23-08-37.png?raw=true "Software Design Patterns Viewer")
