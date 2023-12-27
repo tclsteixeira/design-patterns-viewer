@@ -1,0 +1,33 @@
+# Eclipse CDT
+Debug
+/Release
+debug
+/release
+
+# User-specific files
+#/.cproject
+#/.settings/
+#/*.launch
+
+# Generated files
+/bin/
+/build/
+/.scannerwork/
+/.metadata/
+/.tmp/
+
+# Other files and directories generated during build
+/.idea/
+/*.user
+/*.suo
+/*.aps
+/*.ncb
+/*.opendb
+/*.sdf
+/*.cachefile
+/*.VC.db
+/*.VC.opendb
+/*.VC.VC.opendb
+/*.VC.VC.opendb
+/*.sdf
+/*.opensdf
