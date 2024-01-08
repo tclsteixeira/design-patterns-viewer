@@ -66,25 +66,25 @@ char* globals_get_app_comments_new () {
 	return result;
 }
 
-/*
- * Gets the full path of database file as a new string.
- * Returns the full databse file path if succeeded, NULL otherwise.
- * Note: Returned string should be released later with free().
- */
-char* globals_get_db_full_path_new () {
-	char temp[500];
-	realpath (APP_DATABASE_NAME, temp);
-	char* result = NULL;
-	size_t len = strlen (temp);
-	result = malloc (sizeof(char) * len);
-
-	if (!result) {
-		fprintf (stderr, MESSAGES_MEMORY_ALLOC_ERROR, "string");
-	}
-	else {
-		memcpy (result, temp, len);
-		result[len] = '\0';
-	}
-
-	return result;
-}
+///*
+// * Gets the full path of database file as a new string.
+// * Returns the full databse file path if succeeded, NULL otherwise.
+// * Note: Returned string should be released later with free().
+// */
+//char* globals_get_db_full_path_new () {
+//	char temp[500];
+//	realpath (APP_DATABASE_NAME, temp);
+//	char* result = NULL;
+//	size_t len = strlen (temp);
+//	result = malloc (sizeof(char) * len);
+//
+//	if (!result) {
+//		fprintf (stderr, MESSAGES_MEMORY_ALLOC_ERROR, "string");
+//	}
+//	else {
+//		memcpy (result, temp, len);
+//		result[len] = '\0';
+//	}
+//
+//	return result;
+//}

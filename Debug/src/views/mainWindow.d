@@ -629,7 +629,7 @@ src/views/mainWindow.o: ../src/views/mainWindow.c \
  ../src/views/../controllers/dppartcontroller.h \
  ../src/views/../controllers/dpucasescontroller.h \
  ../src/views/messageWindow.h ../src/views/../messages.h \
- ../src/views/../gettext.h
+ ../src/views/../filepaths.h ../src/views/../gettext.h
 ../src/views/../globals.h:
 ../src/views/../gettext.h:
 /usr/include/gtk-3.0/gtk/gtk.h:
@@ -1311,4 +1311,5 @@ src/views/mainWindow.o: ../src/views/mainWindow.c \
 ../src/views/../controllers/dpucasescontroller.h:
 ../src/views/messageWindow.h:
 ../src/views/../messages.h:
+../src/views/../filepaths.h:
 ../src/views/../gettext.h:

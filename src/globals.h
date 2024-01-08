@@ -11,10 +11,11 @@
 	#include <stdbool.h>
 	#include "gettext.h"
 
+	#define APP_NAME "DPViewergtk"
 	#define APP_TITLE _("Design Patterns Viewer")
 	#define APP_AUTHOR "Tiago C. Teixeira\0"
 	#define APP_COPYRIGHT " 2023, Tiago C. Teixeira"
-	#define APP_VERSION "0.01"
+	#define APP_VERSION "0.0.1"
 	#define APP_DATABASE_NAME "dpviewerdb.sqlite"
 	#define APP_DB_PROVIDER "Sqlite3"
 	#define APP_DEVTOOL "Eclipse 2023 CDT"
@@ -22,12 +23,12 @@
 	#define APP_COMMENTS_2 _("Developed with")
 	#define APP_LOGO "logo.svg"
 
-	/*
-	 * Gets the full path of database file as a new string.
-	 * Returns the full databse file path if succeeded, NULL otherwise.
-	 * Note: Returned string should be released later with free().
-	 */
-	char* globals_get_db_full_path_new ();
+//	/*
+//	 * Gets the full path of database file as a new string.
+//	 * Returns the full databse file path if succeeded, NULL otherwise.
+//	 * Note: Returned string should be released later with free().
+//	 */
+//	char* globals_get_db_full_path_new ();
 
 	/*
 	 * Gets a new string with the app comments notice.

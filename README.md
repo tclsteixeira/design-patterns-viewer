@@ -2,7 +2,7 @@
 ## DPViewergtk
 
 
-**DPViewergtk** is a software design pattern viewer application built with Gtk and sqlite3 and implemented in C.
+**DPViewergtk** is a software design patterns viewer application built with Gtk and sqlite3 and implemented in C.
  
 
 **Author DPViewergtk:**

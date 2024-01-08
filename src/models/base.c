@@ -111,8 +111,14 @@ struct tableRowList* base_execute_select (const char * sqlStr,
 	sqlite3_stmt* stat = NULL;
 
 	if (!file_exists (dbFilePath)) {
+		int len =  strlen (MESSAGES_DATABASE_FILE_NOT_FOUND)
+				+ strlen (dbFilePath) - 1;
 		fprintf (stderr, MESSAGES_DATABASE_FILE_NOT_FOUND, dbFilePath);
-		abort();
+//		retErrMsg = (char**) malloc (sizeof (char**));
+		*retErrMsg = (char*)malloc (len * sizeof (char));
+		sprintf (*retErrMsg, MESSAGES_DATABASE_FILE_NOT_FOUND, dbFilePath);
+		return NULL;
+//		abort();
 	}
 
 	// this is anoying but just realize that the open statment must be in same

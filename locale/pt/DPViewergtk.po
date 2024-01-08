@@ -1,255 +1,278 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Portugese translation for dpviewer package.
+# Copyright (C) 2023 	Tiago C. Teixeira
+# This file is distributed under the same license as the dpviewer package.
+# Tiago C. Teixeira <EMAIL@ADDRESS>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: DPViewer 0.01\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-25 17:32+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2023-12-25 17:50+0000\n"
+"Last-Translator: Tiago C. Teixeira <tt@len-fedora>\n"
+"Language-Team: Portuguese <translation-team-pt@lists.sourceforge.net>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/models/base.c:17
 msgid "Cannot open database"
-msgstr ""
+msgstr "Não foi possivel abrir a base de dados"
 
 #: ../src/models/base.c:18
 msgid "Failed to fetch data"
-msgstr ""
+msgstr "Falhou o carregamento dados"
 
 #: ../src/models/base.c:19
 #, c-format
 msgid "The parameter type '%s' is not supported in 'Select' queries."
-msgstr ""
+msgstr "O tipo de parâmetro '%s' não é suportado em consultas 'select'."
 
 #: ../src/models/base.c:20
 #, c-format
 msgid "Unknown parameter type '%i'."
-msgstr ""
+msgstr "O tipo do parâmetro '%i' é desconhecido."
 
 #: ../src/models/dpmodel.h:33
 msgid "Low"
-msgstr ""
+msgstr "Baixa"
 
 #: ../src/models/dpmodel.h:34
 msgid "Medium-low"
-msgstr ""
+msgstr "Média-baixa"
 
 #: ../src/models/dpmodel.h:35
 msgid "Medium"
-msgstr ""
+msgstr "Média"
 
 #: ../src/models/dpmodel.h:36
 msgid "Medium-high"
-msgstr ""
+msgstr "Média-alta"
 
 #: ../src/models/dpmodel.h:37
 msgid "High"
-msgstr ""
+msgstr "Alta"
 
 #: ../src/main.c:97
 #, c-format
 msgid ""
 "Sqlite3 version: %s\n"
 "\n"
-msgstr ""
+msgstr "Versão do Sqlite3: %s\n"
+"\n"
 
 #: ../src/messages.h:13
 #, c-format
 msgid "Memory error: failed to allocate memory for '%s'!"
-msgstr ""
+msgstr "Erro de memória: falhou ao alocar memória para '%s'!"
 
 #: ../src/messages.h:14
 #, c-format
 msgid "Testing design patterns code data model '%s'\n"
-msgstr ""
+msgstr "Testando o modelo de dados de código de padrões de design '%s'\n"
 
 #: ../src/messages.h:15
 #, c-format
 msgid "%i row(s) loaded.\n"
-msgstr ""
+msgstr "%i linha(s) carregada(s).\n"
 
 #: ../src/messages.h:16
 #, c-format
 msgid "Code Id: %d\n"
-msgstr ""
+msgstr "Id código: %d\n"
 
 #: ../src/messages.h:17
 #, c-format
 msgid "Design pattern Id: %d\n"
-msgstr ""
+msgstr "Id de padrões de design: %d\n"
 
 #: ../src/messages.h:18
 #, c-format
 msgid "Language Id: %d\n"
-msgstr ""
+msgstr "Id linguagem: %d\n"
 
 #: ../src/messages.h:19
 #, c-format
 msgid "Language: %s\n"
-msgstr ""
+msgstr "Linguagem: %s\n"
 
 #: ../src/messages.h:20
 #, c-format
 msgid ""
 "Code:\n"
 "%s\n"
-msgstr ""
+msgstr "Codigo:\n"
+"%s\n"
 
 #: ../src/messages.h:21
 #, c-format
 msgid "Succeeded: %s\n"
-msgstr ""
+msgstr "Sucesso: %s\n"
 
 #: ../src/messages.h:22
 #, c-format
 msgid "Error: %s\n"
-msgstr ""
+msgstr "Erro: %s\n"
 
 #: ../src/messages.h:23
 #, c-format
 msgid "Testing design patterns categories data model '%s'\n"
-msgstr ""
+msgstr "Testando o modelo de dados de categorias de padrões de design '%s'\n"
 
 #: ../src/messages.h:24
 #, c-format
 msgid "Category Id: %d\n"
-msgstr ""
+msgstr "Id categoria: %d\n"
 
 #: ../src/messages.h:25
 #, c-format
 msgid "Category Name: %s\n"
-msgstr ""
+msgstr "Nome da categoria: %s\n"
 
 #: ../src/messages.h:26
 #, c-format
 msgid "Category Description: %s\n"
-msgstr ""
+msgstr "Descrição da categoria: %s\n"
 
 #: ../src/messages.h:27
 #, c-format
 msgid "Testing design patterns usage cases data model '%s'\n"
-msgstr ""
+msgstr "Testando o modelo de dados de casos de uso de padrões de design '%s'\n"
 
 #: ../src/messages.h:28
 #, c-format
 msgid "Usage case Id: %d\n"
-msgstr ""
+msgstr "Id casos de uso: %d\n"
 
 #: ../src/messages.h:29
 #, c-format
 msgid "Designation: %s\n"
-msgstr ""
+msgstr "Designação: %s\n"
 
 #: ../src/messages.h:30
 #, c-format
 msgid ""
 "Description:\n"
 "%s\n"
-msgstr ""
+msgstr "Descrição: \n"
+"%s\n"
 
 #: ../src/messages.h:31
 #, c-format
 msgid "Testing design patterns participants data model '%s'\n"
-msgstr ""
+msgstr "Testando o modelo de dados de participantes de padrões de design '%s'\n"
 
 #: ../src/messages.h:32
 #, c-format
 msgid "Participant Id: %d\n"
-msgstr ""
+msgstr "Id do participante: %d\n"
 
 #: ../src/messages.h:33
 #, c-format
 msgid "Participant name: %s\n"
-msgstr ""
+msgstr "Nome do participante: %s\n"
 
 #: ../src/messages.h:34
 #, c-format
 msgid "Testing design patterns data model '%s'\n"
-msgstr ""
+msgstr "Testando o modelo de dados de padrões de design '%s'\n"
 
 #: ../src/messages.h:35
 #, c-format
 msgid "Pattern Name: %s\n"
-msgstr ""
+msgstr "Nome do padrão: %s\n"
 
 #: ../src/messages.h:36
 #, c-format
 msgid "Freq. usage: %i - "
-msgstr ""
+msgstr "Freq. uso: %i - "
 
 #: ../src/messages.h:38
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 #: ../src/messages.h:39
 msgid "Dark"
-msgstr ""
+msgstr "Escuro"
 
 #: ../src/messages.h:40
 msgid "Light"
-msgstr ""
+msgstr "Claro"
 
 #: ../src/messages.h:42
 msgid "About"
-msgstr ""
+msgstr "Sobre"
 
 #: ../src/messages.h:43
 msgid "Theme: "
-msgstr ""
+msgstr "Tema: "
 
 #: ../src/messages.h:44
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 #: ../src/messages.h:45
 msgid "Code example"
-msgstr ""
+msgstr "Exemplo de código"
 
 #: ../src/messages.h:46
 msgid "Frequency of use: "
-msgstr ""
+msgstr "Frequência de uso: "
 
 #: ../src/messages.h:47
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: ../src/messages.h:48
 msgid "Participants"
-msgstr ""
+msgstr "Participantes"
 
 #: ../src/messages.h:49
 msgid "Usage Cases"
-msgstr ""
+msgstr "Casos de uso"
 
 #: ../src/messages.h:51
 msgid "Patterns"
-msgstr ""
+msgstr "Padrões"
 
 #: ../src/messages.h:52
 msgid "Database file not found at '%s'!\n"
-msgstr ""
+msgstr "Ficheiro de base de dados não encontrado em '%s'!\n"
+
+#: ../src/messages.h:54
+msgid "Invalid number of arguments. Expected 0 or 1 argument.\n"
+msgstr "Número inválido de argumentos. Esperado 0 ou 1 argumento.\n"
+
+#: ../src/messages.h:56
+msgid "options"
+msgstr "opções"
+
+#: ../src/messages.h:57
+msgid "Usage"
+msgstr "Utilização"
+
+#: ../src/messages.h:59
+msgid "                Displays help information and exit.\n"
+msgstr "                Visualiza informação de ajuda e termina.\n"
+
+#: ../src/messages.h:60
+msgid "                Displays version and exit.\n"
+msgstr "                Visualiza a versão e termina.\n"
 
 #: ../src/globals.h:14
 msgid "Design Patterns Viewer"
-msgstr ""
+msgstr "Visualizador De Padrões De Design"
 
 #: ../src/globals.h:21
 msgid "database engine"
-msgstr ""
+msgstr "sistema de base de dados"
 
 #: ../src/globals.h:22
 msgid "Developed with"
-msgstr ""
+msgstr "Desenvolvido com"
 
 #: ../src/globals.c:28
 msgid "Copyright"
-msgstr ""
+msgstr "Direitos de autor"

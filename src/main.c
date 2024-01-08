@@ -2,80 +2,50 @@
  ============================================================================
  Name        : DPViewergtk.c
  Author      : Tiago C. Teixeira
- Version     :
+ Version     : 0.01
  Copyright   : Copyright © 2023, Tiago Teixeira
- Description : Hello World in C, Ansi-style
+ Description : DPViewergtk in C, Ansi-style
  ============================================================================
  */
+
 #include "gettext.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <gtk-3.0/gtk/gtk.h>
 #include <gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h>
-
-//#include <gtksourceview/gtksourceview.h>
-//#include <gtksourceview/gtksourcebuffer.h>
-//#include <gtksourceview/gtksourcelanguage.h>
-//#include <gtksourceview/gtksourcelanguagemanager.h>
-
-
 #include <gtksourceview/gtksource.h>
-////#include <gtksourceview/gtksourcebuffer.h>
 #include <gtksourceview/gtksourcelanguage.h>
 #include <gtksourceview/gtksourcelanguagemanager.h>
-
 #include "controllers/dpcatcontroller.h"
 #include "globals.h"
 #include "models/base.h"
 #include "views/messageWindow.h"
-//#include "globals.h"
+#include "messages.h"
 #include "models/dpcatmodel.h"
 #include "models/dpmodel.h"
 #include "models/dpcodemodel.h"
 #include "models/dppartmodel.h"
 #include "models/dpucasemodel.h"
-
-
 #include "controllers/dpcodecontroller.h"
 #include "controllers/dppartcontroller.h"
 #include "controllers/dpucasescontroller.h"
-
-
 #include "viewinterface.h"
 #include "views/mainWindow.h"
-
-//// translation libs
-//#include <libintl.h>
-//#include <locale.h>
-
-//// Macro for standard mark of text to be translated _()
-//// This is a common way to mark localized strings.
-//#define _(String) gettext(String)
-
-
-
-//#include <gtk-3.0/gtk/gtkpopovermenu.h>
-//#include <gdk/gdk.h>
-
-//char* _global_full_db_path = NULL;
-
-//#define SOURCE_LANGUAGE_C "c"
-//#define SOURCE_LANGUAGE_JAVA "java"
+#include "filepaths.h"
 
 // Declare windows interface as global.
-struct viewInterface* wi;
+struct viewInterface* vi;
 char* _global_full_db_path;
-//GtkWidget *popover;
 
 /*
  * Initializes globals vars..
  */
 void main_init_globals (void)
 {
-	_global_full_db_path = globals_get_db_full_path_new ();
-
+	_global_full_db_path = filepaths_get_db_file_path_new (false);
 	// Instanciates the window interface has a global variable
-	wi = (struct viewInterface*)malloc(sizeof(*wi));
+	vi = (struct viewInterface*)malloc(sizeof(*vi));
 }
 
 /*
@@ -108,7 +78,17 @@ void main_test_all() {
  */
 static void on_app_activate (GtkApplication* app, gpointer user_data)
 {
-	mainWindow_create_main_window (app, wi, _global_full_db_path);
+	mainWindow_create_main_window (app, vi, _global_full_db_path);
+}
+
+/*
+ * Prints command line options.
+ */
+static void main_print_options (void) {
+	printf ("%s:\n    -h, --help\n", MESSAGES_OPTIONS_WORD_LOWER);
+	printf (MESSAGES_DISPLAY_HELP_AND_EXIT);
+	printf ("    -v, --version\n");
+	printf (MESSAGES_DISPLAY_VERSION_AND_EXIT);
 }
 
 /*
@@ -116,9 +96,46 @@ static void on_app_activate (GtkApplication* app, gpointer user_data)
  */
 int main (int argc, char **argv)
 {
+#ifdef DEBUG_MODE
+	char dirName[strlen ("..") + strlen (FILE_PATHS_LOCALE) + 1];
+	dirName[0] = 0;
+	strcat (dirName, "..");
+	strcat (dirName, FILE_PATHS_LOCALE);
+	dirName[strlen (dirName)] = '\0';
+
 	// Specify directory which contains the messages catalogs
-	bindtextdomain("base", "./locales/");
-	textdomain ("base");
+	bindtextdomain (APP_NAME, dirName);	// "./locale/"
+	textdomain (APP_NAME);
+#else
+	// Specify directory which contains the messages catalogs
+	bindtextdomain (APP_NAME, FILE_PATHS_DISTR_LOCALE_BASE);	// "/usr/share/locale"
+	textdomain (APP_NAME);
+#endif
+
+	// Set the locale. The empty string "" means to use the user's default locale.
+	setlocale (LC_ALL, "");
+
+	// Handle argument options (1º arg is command name 'DPViewergtk')
+	if ((argc > 1) && (argc < 3)) {
+		if ((strcmp (argv[1], "-h") == 0) || (strcmp (argv[1],"--help") == 0)) {
+			printf ("%s: ./%s [%s]\n\n", MESSAGES_USAGE_WORD_CAP, APP_NAME, MESSAGES_OPTIONS_WORD_LOWER);
+			main_print_options ();
+			return 0;
+		}
+		else if ((strcmp (argv[1], "-v") == 0) || (strcmp (argv[1], "--version") == 0)) {
+			printf("%s\n", APP_VERSION);
+			return 0;
+		}
+		else {
+			main_print_options( );
+			return 1;
+		}
+	}
+	else if (argc > 2) {
+		printf ("%s\n", MESSAGES_INVALID_NUMBER_ARGS_ERROR);
+		main_print_options ();
+		return 2;
+	}
 
 	// Initialize global vars
 	main_init_globals();
@@ -138,42 +155,7 @@ int main (int argc, char **argv)
 	return status;
 }
 
-//
-//
-//void print_hello() {
-//	puts("Hello world!");
-//}
-//
-//static void quit_cb (GtkWindow *window)
-//{
-//  gtk_window_close (window);
-//}
-//
-//static void activate (GtkApplication *app, gpointer user_data)
-//{
-//  /* Construct a GtkBuilder instance and load our UI description */
-//  GtkBuilder *builder = gtk_builder_new ();
-//  gtk_builder_add_from_file (builder, "builder.ui", NULL);
-//
-//  /* Connect signal handlers to the constructed widgets. */
-//  GObject *window = gtk_builder_get_object (builder, "window");
-//  gtk_window_set_application (GTK_WINDOW (window), app);
-//
-//  GObject *button = gtk_builder_get_object (builder, "button1");
-//  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-//
-//  button = gtk_builder_get_object (builder, "button2");
-//  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-//
-//  button = gtk_builder_get_object (builder, "quit");
-//  g_signal_connect_swapped (button, "clicked", G_CALLBACK (quit_cb), window);
-//
-//  gtk_widget_set_visible (GTK_WIDGET (window), TRUE);
-//
-//  /* We do not need the builder any more */
-//  g_object_unref (builder);
-//}
-//
+
 //int main (int argc, char *argv[])
 //{
 //#ifdef GTK_SRCDIR

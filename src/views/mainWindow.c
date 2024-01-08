@@ -19,6 +19,7 @@
 
 #include "messageWindow.h"
 #include "../messages.h"
+#include "../filepaths.h"
 #include "../gettext.h"
 //#include <pangocairo.h>
 
@@ -30,6 +31,8 @@
 //    return height;
 //}
 //
+
+//#define APP_LOGO_REL_PATH FILE_PATHS_IMAGES ## PATH_SEPARATOR ## APP_LOGO
 
 /*
  * Event handler for about button clicked
@@ -62,9 +65,21 @@ static void on_aboutButton_clicked (GtkWidget *button, GtkWidget *menu) {
 	w = (w < h) ? w : h;
 	if (w > 1080) w = 300; else w = 100;
 
-	GdkPixbuf *about_logo_pixbuf = gdk_pixbuf_new_from_file_at_size (APP_LOGO, w, w, NULL);
-	gtk_about_dialog_set_logo (aboutDlg, about_logo_pixbuf);
-	g_object_unref (about_logo_pixbuf); about_logo_pixbuf= NULL;
+	GError** err = NULL;
+	char* logoRelPath = filepaths_get_logo_image_file_path_new (false);
+	GdkPixbuf *about_logo_pixbuf =
+				gdk_pixbuf_new_from_file_at_size (logoRelPath, w, w,
+								err);
+
+	if (!about_logo_pixbuf) {
+		printf("Failed to get logo image file in '%s'", logoRelPath);
+		if (err)
+			printf("%s\n", (*err)->message);
+	}
+	else {
+		gtk_about_dialog_set_logo (aboutDlg, about_logo_pixbuf);
+		g_object_unref (about_logo_pixbuf); about_logo_pixbuf= NULL;
+	}
 
 	// Open modal window
 	gtk_dialog_run (GTK_DIALOG (aboutDlg));
@@ -345,21 +360,21 @@ static GtkWidget* main_create_usage_cases_text_view ()
 static void mainWindow_process_tree_view_selected_item (GtkTreeModel *model,
 											   GtkTreePath *path,
 											   GtkTreeIter iter,
-											   struct viewInterface* wi)
+											   struct viewInterface* vi)
 {
 	int depth = gtk_tree_path_get_depth (path);
 	int dpId = -1;
 
 	// Reset level bar to zero
-	gtk_level_bar_set_value (wi->dpUsageLevelBar, 0);
-	gtk_label_set_text (wi->dpUsageLevelLabel, "");
+	gtk_level_bar_set_value (vi->dpUsageLevelBar, 0);
+	gtk_label_set_text (vi->dpUsageLevelLabel, "");
 
 	if (depth > 0) {
 		GValue value = G_VALUE_INIT;
 		gtk_tree_model_get_value (model, &iter, DESC_COLUMN, &value);
 		const char* desc = g_value_get_string (&value);
 		// Update description
-		vi_set_text_view_content(wi->dpDescView, desc, FALSE);
+		vi_set_text_view_content(vi->dpDescView, desc, FALSE);
 		g_value_unset(&value);
 	}
 
@@ -374,44 +389,54 @@ static void mainWindow_process_tree_view_selected_item (GtkTreeModel *model,
 		gtk_tree_model_get_value (model, &iter, FREQ_USAGE_COLUMN, &value2);
 		int dpFreqLevel = g_value_get_int (&value2);
 		if ((dpFreqLevel >= DP_FREQ_LEVEL_MIN) && (dpFreqLevel <= DP_FREQ_LEVEL_MAX)) {
-			gtk_level_bar_set_value (wi->dpUsageLevelBar, dpFreqLevel);
+			gtk_level_bar_set_value (vi->dpUsageLevelBar, dpFreqLevel);
 
 			// Update freq level description label
 			char* desc = dpmodel_get_frequency_desc (dpFreqLevel);
 			if (desc)
-				gtk_label_set_text (wi->dpUsageLevelLabel, desc);
+				gtk_label_set_text (vi->dpUsageLevelLabel, desc);
 
 			free (desc);
-
 		}
 
 		g_value_unset(&value2);
 	}
 
-	char* dbFullPath = globals_get_db_full_path_new ();
+	// We need a full path for sqlite api's
+	char* dbFullPath = filepaths_get_db_file_path_new (false);
+
+	if (!filepaths_file_exists (dbFullPath)) {
+		int len = strlen (dbFullPath) + strlen (MESSAGES_ERROR_TITLE) -1;
+		char msg[len]; msg[0] = 0;
+		sprintf (msg, MESSAGES_DATABASE_FILE_NOT_FOUND, dbFullPath);
+		fprintf (stderr, msg);
+		messageWindow_show_error (NULL, MESSAGES_ERROR_TITLE, msg);
+		return;
+	}
+			// globals_get_db_full_path_new ();
 	char** retErrMsg = NULL;
 
 	// Refresh source view
-	dpcatcontroller_refreshSourceView (dbFullPath, dpId, wi, retErrMsg);
+	dpcatcontroller_refreshSourceView (dbFullPath, dpId, vi, retErrMsg);
 
 	if (globals_hasError (retErrMsg)) {
-		messageWindow_show_error (wi->mainWwindow, MESSAGES_ERROR_TITLE, *retErrMsg);
+		messageWindow_show_error (vi->mainWwindow, MESSAGES_ERROR_TITLE, *retErrMsg);
 		free (*retErrMsg);
 	}
 
 	// Refresh participants
-	dppartcontroller_refresh_Participants (dbFullPath, dpId, wi, retErrMsg);
+	dppartcontroller_refresh_Participants (dbFullPath, dpId, vi, retErrMsg);
 
 	if (globals_hasError (retErrMsg)) {
-		messageWindow_show_error (wi->mainWwindow, MESSAGES_ERROR_TITLE, *retErrMsg);
+		messageWindow_show_error (vi->mainWwindow, MESSAGES_ERROR_TITLE, *retErrMsg);
 		free (*retErrMsg);
 	}
 
 	// Refresh participants
-	dpucasescontroller_refresh_cases (dbFullPath, dpId, wi, retErrMsg);
+	dpucasescontroller_refresh_cases (dbFullPath, dpId, vi, retErrMsg);
 
 	if (globals_hasError (retErrMsg)) {
-		messageWindow_show_error (wi->mainWwindow, MESSAGES_ERROR_TITLE, *retErrMsg);
+		messageWindow_show_error (vi->mainWwindow, MESSAGES_ERROR_TITLE, *retErrMsg);
 		free (*retErrMsg);
 	}
 
@@ -760,7 +785,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 //	// Execute tests
 //	mainO_test_all();
 
-	char** retErrMsg = NULL;
+	char** retErrMsg = malloc (sizeof (char**));
 	// Load TreeView
 	dpcatcontroller_refreshTreeView (dbFullPath, vi, retErrMsg);
 
@@ -768,6 +793,8 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 		messageWindow_show_error (GTK_WINDOW (window),
 								  "Error", *retErrMsg);
 	}
+
+	free (retErrMsg);
 
 	// Connect the row-activated signal
 	g_signal_connect (vi->treeView1, "row-activated",

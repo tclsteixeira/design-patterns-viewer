@@ -34,8 +34,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all:
-	+@$(MAKE) --no-print-directory main-build && $(MAKE) --no-print-directory post-build
+all: main-build
 
 # Main-build Target
 main-build: DPViewergtk
@@ -44,7 +43,7 @@ main-build: DPViewergtk
 DPViewergtk: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross GCC Linker'
-	gcc `pkg-config --libs gtk+-3.0 gtksourceview-3.0 pango gobject-2.0`  -o "DPViewergtk" $(OBJS) $(USER_OBJS) $(LIBS) -lsqlite3
+	gcc `pkg-config --libs gtk+-3.0 gtksourceview-3.0 pango gobject-2.0` -p -o "DPViewergtk" $(OBJS) $(USER_OBJS) $(LIBS) -lsqlite3
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -53,10 +52,6 @@ clean:
 	-$(RM) DPViewergtk
 	-@echo ' '
 
-post-build:
-	-cp -r ../locales ../Debug; cp ../dpviewerdb.sqlite ../Debug; cp ../logo.svg ../Debug
-	-@echo ' '
-
-.PHONY: all clean dependents main-build post-build
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

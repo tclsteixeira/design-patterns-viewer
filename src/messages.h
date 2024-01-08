@@ -51,10 +51,13 @@
 	#define MESSAGES_PATTERNS_WORD _("Patterns")
 	#define MESSAGES_DATABASE_FILE_NOT_FOUND _("Database file not found at '%s'!\n")
 
+	#define MESSAGES_INVALID_NUMBER_ARGS_ERROR  _("Invalid number of arguments. Expected 0 or 1 argument.\n")
 
-//	#define MESSAGES_ = _("")
-//	#define MESSAGES_ = _("")
-//	#define MESSAGES_ = _("")
+	#define MESSAGES_OPTIONS_WORD_LOWER  _("options")
+	#define MESSAGES_USAGE_WORD_CAP  _("Usage")
+
+	#define MESSAGES_DISPLAY_HELP_AND_EXIT  _("                Displays help information and exit.\n")
+	#define MESSAGES_DISPLAY_VERSION_AND_EXIT  _("                Displays version and exit.\n")
 
 
 #endif /* MESSAGES_H_ */

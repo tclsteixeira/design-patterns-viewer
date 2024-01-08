@@ -238,6 +238,26 @@ msgstr ""
 msgid "Database file not found at '%s'!\n"
 msgstr ""
 
+#: ../src/messages.h:54
+msgid "Invalid number of arguments. Expected 0 or 1 argument.\n"
+msgstr ""
+
+#: ../src/messages.h:56
+msgid "options"
+msgstr ""
+
+#: ../src/messages.h:57
+msgid "Usage"
+msgstr ""
+
+#: ../src/messages.h:59
+msgid "                Displays help information and exit.\n"
+msgstr ""
+
+#: ../src/messages.h:60
+msgid "                Displays version and exit.\n"
+msgstr ""
+
 #: ../src/globals.h:14
 msgid "Design Patterns Viewer"
 msgstr ""
