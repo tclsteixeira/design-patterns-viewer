@@ -4,8 +4,8 @@ Release:		1%{?dist}
 Summary:		Software design patterns viewer
 License:		GPL-3.0-or-later
 Group:			Applications/Education
-URL:			NONE
-Source:			%{name}-%{version}.tar.gz
+URL:			https://github.com/tclsteixeira/design-patterns-viewer
+Source:			%{url}/raw/main/archive/%{name}-%{version}.tar.gz
 
 BuildRequires:	gcc
 BuildRequires:	make
@@ -46,7 +46,6 @@ install -m 755 Debug/%{name} %{buildroot}/%{_prefix}/bin
 install -m 644 images/%{name}.svg %{buildroot}/%{_datadir}/icons/hicolor/scalable/apps/
 install -m 644 images/logo.svg %{buildroot}/%{_datadir}/%{name}/images/
 install -m 644 database/dpviewerdb.sqlite %{buildroot}/%{_localstatedir}/%{name}/database/
-install -m 644 %{name}.desktop %{buildroot}/%{_datadir}/applications/
 install -m 644 %{name}.desktop %{buildroot}/%{_datadir}/applications/
 
 # Install translated language files (*.mo)
