@@ -25,7 +25,7 @@ From a list of software design patterns you can view the description of the patt
 %autosetup
 
 %build
-cd Debug
+cd Release
 make clean
 make main-build
 
@@ -40,7 +40,7 @@ install -d %{buildroot}/%{_datadir}/applications
 install -d %{buildroot}/%{_datadir}/icons/hicolor/scalable/apps
 
 # Install binary without debug information
-install -m 755 Debug/%{name} %{buildroot}/%{_prefix}/bin
+install -m 755 Release/%{name} %{buildroot}/%{_prefix}/bin
 
 # Install data files
 install -m 644 images/%{name}.svg %{buildroot}/%{_datadir}/icons/hicolor/scalable/apps/
@@ -71,5 +71,5 @@ install -Dm 644 %{section_name}.%{section} %{buildroot}%{_mandir}/man%{section}/
 %{_mandir}/man%{section}/%{section_name}.%{section}.gz
 
 %changelog
-* Wed Jan 03 2024 Tiago C. Teixeira <xpto@example.com> - 0.0.1
+* Wed Jan 03 2024 Tiago C. Teixeira <tclstdev@gmail.com> - 0.0.1
 - Initial RPM release

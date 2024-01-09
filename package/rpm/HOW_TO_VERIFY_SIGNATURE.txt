@@ -1,0 +1,19 @@
+HOW-TO VERIFY PACKAGE SIGNATURE
+
+If testing on same machine where package was signed skip step 1.
+
+1- Import the public key to the RPM database of target machine.
+	[someuser@localhost ~]# sudo rpm --import public-key-file-name
+	
+For the DPViewergtk key file do:
+	[someuser@localhost ~]# sudo rpm --import RPM-GPG-KEY-DPViewergtk
+--------------------------------------------		
+
+2- Verify package signature as follows.
+	[someuser@localhost ~]# rpm	--checksig <package_name>.rpm
+
+For the three packages do:
+	[root@localhost ~]# rpm	--checksig DPViewergtk-0.0.1-1.fc38.x86_64.rpm
+	[root@localhost ~]# rpm	--checksig DPViewergtk-debuginfo-0.0.1-1.fc38.x86_64.rpm
+	[root@localhost ~]# rpm	--checksig DPViewergtk-debugsource-0.0.1-1.fc38.x86_64.rpm
+	(don't need to be root)
