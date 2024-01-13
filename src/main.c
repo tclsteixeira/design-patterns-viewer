@@ -12,11 +12,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <gtk-3.0/gtk/gtk.h>
 #include <gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h>
-#include <gtksourceview/gtksource.h>
-#include <gtksourceview/gtksourcelanguage.h>
-#include <gtksourceview/gtksourcelanguagemanager.h>
 #include "controllers/dpcatcontroller.h"
 #include "globals.h"
 #include "models/base.h"
@@ -36,14 +34,14 @@
 
 // Declare windows interface as global.
 struct viewInterface* vi;
-char* _global_full_db_path;
+//char* _global_full_db_path;
 
 /*
  * Initializes globals vars..
  */
 void main_init_globals (void)
 {
-	_global_full_db_path = filepaths_get_db_file_path_new (false);
+//	_global_full_db_path = filepaths_get_db_file_path_new (false);
 	// Instanciates the window interface has a global variable
 	vi = (struct viewInterface*)malloc(sizeof(*vi));
 }
@@ -53,24 +51,27 @@ void main_init_globals (void)
  */
 void main_destroy_globals (void)
 {
-	if (_global_full_db_path)
-		free (_global_full_db_path);
+//	if (_global_full_db_path)
+//		free (_global_full_db_path);
+	free (vi);
 }
 
 /*
  * Executes all tests
  */
 void main_test_all() {
+	char* dbPath = filepaths_get_db_file_path_new (false);
+
 	// display sqlite3 engine version
 	char vstr[15];
-	base_sqlite3_version(vstr);
+	base_sqlite3_version (vstr);
 	printf (_("Sqlite3 version: %s\n\n"), vstr);
 
-	dpcatmodel_test (_global_full_db_path);		// Test model 'dpcatmodel'
-	dpmodel_test (_global_full_db_path);		// Test model 'dpmodel'
-	dpcodemodel_test (_global_full_db_path);	// Test model 'dpcodemodel'
-	dppartmodel_test (_global_full_db_path);	// Test model 'dppartmodel
-	dpucasemodel_test (_global_full_db_path);	// Test model 'dpucasemodel
+	dpcatmodel_test (dbPath);		// Test model 'dpcatmodel'
+	dpmodel_test (dbPath);		// Test model 'dpmodel'
+	dpcodemodel_test (dbPath);	// Test model 'dpcodemodel'
+	dppartmodel_test (dbPath);	// Test model 'dppartmodel
+	dpucasemodel_test (dbPath);	// Test model 'dpucasemodel
 }
 
 /*
@@ -78,7 +79,7 @@ void main_test_all() {
  */
 static void on_app_activate (GtkApplication* app, gpointer user_data)
 {
-	mainWindow_create_main_window (app, vi, _global_full_db_path);
+	mainWindow_create_main_window (app, vi, filepaths_get_db_file_path_new (false));
 }
 
 /*
@@ -96,38 +97,41 @@ static void main_print_options (void) {
  */
 int main (int argc, char **argv)
 {
-#ifdef DEBUG_MODE
-	char dirName[strlen ("..") + strlen (FILE_PATHS_LOCALE) + 1];
-	dirName[0] = 0;
-	strcat (dirName, "..");
-	strcat (dirName, FILE_PATHS_LOCALE);
-	dirName[strlen (dirName)] = '\0';
+	char* dirName = filepaths_get_locale_dir_path_new (FALSE);
+	bindtextdomain (APP_NAME, dirName);
+	free (dirName);
 
-	// Specify directory which contains the messages catalogs
-	bindtextdomain (APP_NAME, dirName);	// "./locale/"
 	textdomain (APP_NAME);
-#else
-	// Specify directory which contains the messages catalogs
-	bindtextdomain (APP_NAME, FILE_PATHS_DISTR_LOCALE_BASE);	// "/usr/share/locale"
-	textdomain (APP_NAME);
-#endif
 
 	// Set the locale. The empty string "" means to use the user's default locale.
 	setlocale (LC_ALL, "");
 
-	// Handle argument options (1º arg is command name 'DPViewergtk')
+	/*
+	 * Handle argument options (1º arg is command name path),
+	 * second argument can be following options.
+	 * Options:
+	 * 		-v, --version
+	 * 				Displays the version and exit.
+	 * 		-h, --help
+	 * 				Displays help and exit.
+	 */
 	if ((argc > 1) && (argc < 3)) {
 		if ((strcmp (argv[1], "-h") == 0) || (strcmp (argv[1],"--help") == 0)) {
-			printf ("%s: ./%s [%s]\n\n", MESSAGES_USAGE_WORD_CAP, APP_NAME, MESSAGES_OPTIONS_WORD_LOWER);
+			// Display help info.
+			printf ("%s: %s [%s]\n\n", MESSAGES_USAGE_WORD_CAP, APP_NAME, MESSAGES_OPTIONS_WORD_LOWER);
 			main_print_options ();
 			return 0;
 		}
 		else if ((strcmp (argv[1], "-v") == 0) || (strcmp (argv[1], "--version") == 0)) {
+			// Display version.
 			printf("%s\n", APP_VERSION);
 			return 0;
 		}
 		else {
-			main_print_options( );
+			// Unknown argument.
+			printf (MESSAGES_UNKNOWN_ARG_ERROR, argv[1]);
+			printf ("\n");
+			main_print_options ( );
 			return 1;
 		}
 	}

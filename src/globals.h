@@ -23,13 +23,6 @@
 	#define APP_COMMENTS_2 _("Developed with")
 	#define APP_LOGO "logo.svg"
 
-//	/*
-//	 * Gets the full path of database file as a new string.
-//	 * Returns the full databse file path if succeeded, NULL otherwise.
-//	 * Note: Returned string should be released later with free().
-//	 */
-//	char* globals_get_db_full_path_new ();
-
 	/*
 	 * Gets a new string with the app comments notice.
 	 * Note: Result string should be free later.

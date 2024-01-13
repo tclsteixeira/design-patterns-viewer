@@ -14,6 +14,11 @@ BuildRequires:	gtksourceview3
 BuildRequires:	sqlite
 BuildRequires:	gettext
 
+Requires:       gtk3 >= 3.x
+Requires:       gtksourceview3
+Requires:       sqlite
+Requires:       gettext
+
 # Add the following lines to include the man page
 %define section 1
 %define section_name %{name}

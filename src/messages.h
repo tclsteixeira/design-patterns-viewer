@@ -59,5 +59,6 @@
 	#define MESSAGES_DISPLAY_HELP_AND_EXIT  _("                Displays help information and exit.\n")
 	#define MESSAGES_DISPLAY_VERSION_AND_EXIT  _("                Displays version and exit.\n")
 
+	#define MESSAGES_UNKNOWN_ARG_ERROR  _("Unknown argument '%s'.\n")
 
 #endif /* MESSAGES_H_ */

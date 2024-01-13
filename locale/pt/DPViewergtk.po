@@ -261,6 +261,10 @@ msgstr "                Visualiza informação de ajuda e termina.\n"
 msgid "                Displays version and exit.\n"
 msgstr "                Visualiza a versão e termina.\n"
 
+#: ../src/messages.h:62
+msgid "Unknown argument '%s'.\n"
+msgstr "Argumento desconhecido.\n"
+
 #: ../src/globals.h:14
 msgid "Design Patterns Viewer"
 msgstr "Visualizador De Padrões De Design"

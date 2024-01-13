@@ -185,7 +185,12 @@ void dpcatcontroller_refreshTreeView (const char* databasePath, struct viewInter
 	struct treeItem** tItemArr = NULL;	// Struct that will populate tree view.
 	int arrSize = 0;
 
-	if (globals_hasError(retErrMsg) || (cats == NULL)) {
+	if (globals_hasError (retErrMsg)) {
+		printf ("Got error after '%s'\n", "dpcatmodel_load_categories()");
+		goto TERMINATE;
+	}
+	else if (cats == NULL) {
+//		printf ("dpcatmodel_load_categories() returned 'NULL'\n");
 		goto TERMINATE;
 	}
 
@@ -219,6 +224,7 @@ void dpcatcontroller_refreshTreeView (const char* databasePath, struct viewInter
 			patts = dpmodel_load_patterns (databasePath, catId, retErrMsg);
 
 			if (globals_hasError(retErrMsg) || (patts == NULL)) {
+//				printf ("Error after 'dpmodel_load_patterns()'\n");
 				goto TERMINATE;
 			}
 

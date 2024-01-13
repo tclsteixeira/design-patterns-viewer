@@ -6,31 +6,31 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: DPViewer 0.01\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-25 17:32+0000\n"
+"POT-Creation-Date: 2024-01-12 16:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/models/base.c:17
+#: ../src/models/base.c:19
 msgid "Cannot open database"
 msgstr ""
 
-#: ../src/models/base.c:18
+#: ../src/models/base.c:20
 msgid "Failed to fetch data"
 msgstr ""
 
-#: ../src/models/base.c:19
+#: ../src/models/base.c:21
 #, c-format
 msgid "The parameter type '%s' is not supported in 'Select' queries."
 msgstr ""
 
-#: ../src/models/base.c:20
+#: ../src/models/base.c:22
 #, c-format
 msgid "Unknown parameter type '%i'."
 msgstr ""
@@ -55,7 +55,7 @@ msgstr ""
 msgid "High"
 msgstr ""
 
-#: ../src/main.c:97
+#: ../src/main.c:67
 #, c-format
 msgid ""
 "Sqlite3 version: %s\n"
@@ -235,6 +235,7 @@ msgid "Patterns"
 msgstr ""
 
 #: ../src/messages.h:52
+#, c-format
 msgid "Database file not found at '%s'!\n"
 msgstr ""
 
@@ -244,7 +245,7 @@ msgstr ""
 
 #: ../src/messages.h:56
 msgid "options"
-msgstr ""
+msgstr ""
 
 #: ../src/messages.h:57
 msgid "Usage"
@@ -258,15 +259,20 @@ msgstr ""
 msgid "                Displays version and exit.\n"
 msgstr ""
 
-#: ../src/globals.h:14
+#: ../src/messages.h:62
+#, c-format
+msgid "Unknown argument '%s'.\n"
+msgstr ""
+
+#: ../src/globals.h:15
 msgid "Design Patterns Viewer"
 msgstr ""
 
-#: ../src/globals.h:21
+#: ../src/globals.h:22
 msgid "database engine"
 msgstr ""
 
-#: ../src/globals.h:22
+#: ../src/globals.h:23
 msgid "Developed with"
 msgstr ""
 

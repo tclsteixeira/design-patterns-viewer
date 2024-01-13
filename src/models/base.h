@@ -3,6 +3,7 @@
  *
  *  Created on: 19/11/2023
  *      Author: Tiago C. Teixeira
+ *      Description: C Headers for low level database access functions.
  */
 
 #ifndef MODELS_BASE_H_
@@ -46,12 +47,6 @@
 	 * ex: "3.8.1"
 	 */
 	int base_sqlite3_version(char* output);
-
-//	/*
-//	 * Try to open a database file.
-//	 * Returns true if succeeded, false otherwise.
-//	 */
-//	bool base_open_database (const char* dbFilePath, sqlite3* db, char** retErrMsg);
 
 	/*
 	 * Executes a select statment and returns result.

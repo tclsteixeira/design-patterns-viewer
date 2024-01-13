@@ -3,6 +3,7 @@
  *
  *  Created on: 19/11/2023
  *      Author: Tiago C. Teixeira
+ *      Description: C implementation for low level database access functions.
  */
 
 #include <stdio.h>
@@ -51,6 +52,7 @@ int base_haserror(int code) {
  * Writes error message to stderr.
  */
 void base_handle_error (char* msg, sqlite3* db) {
+//	printf ("Function 'base_handle_error()', sqlite3_errormsg() = '%s'\n", sqlite3_errmsg(db));
 	fprintf(stderr, "%s: %s\n", msg, sqlite3_errmsg(db));
 }
 
@@ -82,9 +84,8 @@ int base_sqlite3_version(char* output) {
 
 	// only one row expected
 	if (rc == SQLITE_ROW) {
-//		int a = strlen("");
 		size_t len = strlen ((char*)(sqlite3_column_text(res, 0)));
-		memcpy(output, sqlite3_column_text(res, 0), len * sizeof(char));
+		memcpy (output, sqlite3_column_text(res, 0), len * sizeof(char));
 		// append null terminater at end
 		output[len] = 0;
 	}
@@ -114,35 +115,36 @@ struct tableRowList* base_execute_select (const char * sqlStr,
 		int len =  strlen (MESSAGES_DATABASE_FILE_NOT_FOUND)
 				+ strlen (dbFilePath) - 1;
 		fprintf (stderr, MESSAGES_DATABASE_FILE_NOT_FOUND, dbFilePath);
-//		retErrMsg = (char**) malloc (sizeof (char**));
 		*retErrMsg = (char*)malloc (len * sizeof (char));
+		*retErrMsg = 0;
+//		printf ("function 'base_execute_select()', dbFilePath = '%s'\n", dbFilePath);
+
 		sprintf (*retErrMsg, MESSAGES_DATABASE_FILE_NOT_FOUND, dbFilePath);
 		return NULL;
-//		abort();
 	}
 
-	// this is anoying but just realize that the open statment must be in same
+	// This is annoying but just realize that the open statment must be in same
 	// function as prepare_v2 otherwise 'out of memory' error will be raised. :(
 	int rc = sqlite3_open(dbFilePath, &db);
-//	free(path);	// not needed anymore.
 
 	if (rc != SQLITE_OK) {
+//		printf ("Error after 'sqlite3_open()'\n");
 		base_handle_error (BASE_MSG_CANNOT_OPEN_DATABASE, db);
-		sqlite3_close(db);
+		sqlite3_close (db);
 		return 0;
 	}
 
 	rc = sqlite3_prepare_v2 (db, sqlStr, -1, &stat, 0);
 
 	if (rc != SQLITE_OK) {
+//		printf ("Error after 'sqlite3_prepare_v2()'\n");
 		*retErrMsg = strdup ((char*)sqlite3_errmsg (db));
-		sqlite3_close(db);
+		sqlite3_close (db);
 		return result;
 	}
 
 	// goto to first row
 	rc = sqlite3_step(stat);
-//	int i = -1;
 	result = records_create_table_row_list (freedatacallback);
 
 	// iterate row by row
@@ -156,6 +158,8 @@ struct tableRowList* base_execute_select (const char * sqlStr,
 
 	sqlite3_finalize (stat);
 	sqlite3_close(db);
+
+//	printf ("No Error at end of 'base.c'\n");
 
 	return result;
 }
@@ -177,14 +181,13 @@ struct tableRowList* base_execute_select_params (
 	sqlite3* db;
 	sqlite3_stmt* stat = NULL;
 
-	// this is anoying but just realize that the open statment must be in same
+	// This is anoying but just realize that the open statment must be in same
 	// function as prepare_v2 otherwise 'out of memory' error will be raised. :(
 	int rc = sqlite3_open (dbFilePath, &db);
-//	free(path);	// not needed anymore.
 
 	if (rc != SQLITE_OK) {
 		base_handle_error (BASE_MSG_CANNOT_OPEN_DATABASE, db);
-		sqlite3_close(db);
+		sqlite3_close (db);
 		return 0;
 	}
 
@@ -193,6 +196,7 @@ struct tableRowList* base_execute_select_params (
 
 	if (rc != SQLITE_OK) {
 		*retErrMsg = strdup ((char*)sqlite3_errmsg (db));
+		printf ("rc error: base_execute_select_params(), reErrMsg='%s'\n", *retErrMsg);
 		goto TERMINATE;
 	}
 

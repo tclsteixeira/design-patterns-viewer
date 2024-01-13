@@ -17,22 +17,16 @@
 #include "../controllers/dppartcontroller.h"
 #include "../controllers/dpucasescontroller.h"
 
+//#include <gtksourceview/gtksource.h>
+//#include <gtksourceview/gtksourcelanguage.h>
+//#include <gtksourceview/gtksourcelanguagemanager.h>
+
 #include "messageWindow.h"
 #include "../messages.h"
 #include "../filepaths.h"
 #include "../gettext.h"
 //#include <pangocairo.h>
 
-//// Function to get the line height of a PangoLayout
-//int __get_line_height (PangoLayout *layout) {
-//    PangoFontMetrics *metrics = pango_context_get_metrics (pango_layout_get_context (layout), pango_layout_get_font_description(layout), NULL);
-//    int height = pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent (metrics);
-//    pango_font_metrics_unref (metrics);
-//    return height;
-//}
-//
-
-//#define APP_LOGO_REL_PATH FILE_PATHS_IMAGES ## PATH_SEPARATOR ## APP_LOGO
 
 /*
  * Event handler for about button clicked
@@ -469,7 +463,7 @@ static void on_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTree
 /*
  * Tree view button press event handler.
  */
-static void on_button_press (GtkWidget *treeview,
+static gboolean on_button_press (GtkWidget *treeview,
 					  GdkEventButton *event,
 					  gpointer user_data) {
     if (event->type == GDK_BUTTON_PRESS && event->button == 1) {  // Check for left button click
@@ -488,6 +482,8 @@ static void on_button_press (GtkWidget *treeview,
             gtk_tree_path_free(path);
         }
     }
+
+    return FALSE;	// Let system handle
 }
 
 /*
@@ -560,6 +556,33 @@ static void mainWindow_format_label (GtkLabel* label) {
 
 		free (labelColor);
 	}
+}
+
+// Callback function for the key-press-event signal
+static gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if (event->keyval == GDK_KEY_Return) {
+        GtkTreeView *treeview = GTK_TREE_VIEW(widget);
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(treeview);
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+
+        if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+            GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+
+            // Check if the row is expanded or collapsed and toggle its state
+            if (gtk_tree_view_row_expanded(treeview, path)) {
+                gtk_tree_view_collapse_row(treeview, path);
+            } else {
+                gtk_tree_view_expand_row(treeview, path, FALSE);
+            }
+
+            gtk_tree_path_free(path);
+        }
+
+//        return TRUE;  // Event handled
+    }
+
+    return FALSE;  // Event not handled. Let system handle it to avoid side effects.
 }
 
 /*
@@ -757,11 +780,9 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 //	gtk_paned_add2 (GTK_PANED (hpaned1), GTK_WIDGET (codePartPaned));
 	gtk_paned_pack2 (GTK_PANED (hpaned1), GTK_WIDGET (codePartPaned), TRUE, TRUE);
 
-
 	// add paned panel to top level vbox
 	gtk_box_pack_end (GTK_BOX (toplevel_vbox), hpaned1, TRUE, TRUE, 0);
-
-	gtk_container_add(GTK_CONTAINER(window), toplevel_vbox);
+	gtk_container_add (GTK_CONTAINER(window), toplevel_vbox);
 
 	// Show all widgets
 	gtk_widget_show_all (window);
@@ -773,19 +794,18 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 
 	int w = 0; int h = 0;
 	gtk_window_get_default_size (GTK_WINDOW (window), &w, &h);
-//	w = 1024; h = 614;
 
 	// Set position of panel splitters based on current default size
 	gtk_paned_set_position (GTK_PANED (hpaned1), (gint)(w/4.8));
 	gtk_paned_set_position (GTK_PANED (codePartPaned), (gint)(w/3.0));
-//	printf ("Code/partpane: %i\n", gtk_paned_get_position (GTK_PANED (codePartPaned)));
 	gtk_paned_set_position (GTK_PANED (partCasesPaned), (gint)(h/2.5));
-//	printf ("Part/cases: %i\n", gtk_paned_get_position (GTK_PANED (partCasesPaned)));
 
 //	// Execute tests
 //	mainO_test_all();
 
-	char** retErrMsg = malloc (sizeof (char**));
+	char** retErrMsg = malloc (sizeof (char*));
+	retErrMsg = NULL;	// very important initialize to NULL to avoid garbage data
+
 	// Load TreeView
 	dpcatcontroller_refreshTreeView (dbFullPath, vi, retErrMsg);
 
@@ -799,6 +819,10 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Connect the row-activated signal
 	g_signal_connect (vi->treeView1, "row-activated",
 					  G_CALLBACK (on_row_activated), vi);
+
+	// Connect the key-press-event signal to the callback function
+	g_signal_connect (vi->treeView1, "key-press-event", G_CALLBACK(on_key_press_event), NULL);
+
 	// Connect the row-activated signal
 	g_signal_connect (vi->treeView1, "button-press-event",
 					  G_CALLBACK (on_button_press), vi);

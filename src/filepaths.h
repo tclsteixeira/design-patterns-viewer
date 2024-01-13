@@ -22,8 +22,8 @@
 		#define FILE_PATHS_DATABASE "\\database"
 		#define FILE_PATHS_IMAGES "\\images"
 
-		#define FILE_PATHS_DEBUG_DATABASE "../database"
-		#define FILE_PATHS_DEBUG_IMAGES "../images"
+		#define FILE_PATHS_DEBUG_DATABASE "./database"
+		#define FILE_PATHS_DEBUG_IMAGES "./images"
 
 		#define FILE_PATHS_DISTR_DATABASE_BASE "/xpto"
 		#define FILE_PATHS_DISTR_IMAGES_BASE "/xpto"
@@ -38,8 +38,8 @@
 
 		#define FILE_PATHS_IMAGES "/images"
 
-		#define FILE_PATHS_DEBUG_DATABASE "../database"
-		#define FILE_PATHS_DEBUG_IMAGES "../images"
+		#define FILE_PATHS_DEBUG_DATABASE "/database"
+		#define FILE_PATHS_DEBUG_IMAGES "/images"
 
 		#define FILE_PATHS_DISTR_DATABASE_BASE "/var/"
 		#define FILE_PATHS_DISTR_IMAGES_BASE "/usr/share/"
@@ -47,12 +47,15 @@
 
 	#endif
 
-//	#define FILE_PATHS_LOGO_REL_PATH STRINGIZE(CONCATENATE(FILE_PATHS_IMAGES, PATH_SEPARATOR, APP_LOGO))
-
 	/*
 	 * Checks a a file exists for a given path.
 	 */
 	int filepaths_file_exists (const char *filename);
+
+	/*
+	 * Gets the full file path of the locale directoty.
+	 */
+	char* filepaths_get_locale_dir_path_new ();
 
 	/*
 	 * Gets the full file path of the logo image file.
