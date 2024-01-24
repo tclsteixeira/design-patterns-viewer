@@ -185,6 +185,7 @@ static GtkWidget* main_create_header_bar (struct viewInterface* vi)
 	gtk_widget_set_margin_start (dropDownThemelabel, 8);
 
 	GtkWidget* dropDownTheme = main_create_dropdown_theme ();
+	vi->dropDownTheme = GTK_COMBO_BOX (dropDownTheme);
 	g_signal_connect (dropDownTheme, "changed", G_CALLBACK (on_dropDownTheme_changed), vi);
 
 	// Select first item (System theme)
@@ -243,6 +244,7 @@ static GtkWidget* main_create_source_view ()
 
 	// Code is not editable .
 	gtk_text_view_set_editable (GTK_TEXT_VIEW (sView1), FALSE);
+	gtk_widget_set_can_focus (sView1, TRUE);
 	return sView1;
 }
 
@@ -269,6 +271,7 @@ static GtkWidget* main_create_dpdesc_expander ()
 
 	// Set expander bold
 	vi_set_expander_title_bold (GTK_EXPANDER(expander));
+	gtk_widget_set_can_focus (expander, TRUE);
 	return expander;
 }
 
@@ -294,6 +297,7 @@ static GtkWidget* main_create_dpdesc_text_view ()
 	gtk_widget_set_margin_top ( GTK_WIDGET (descTextView), descTextViewTopMargin);
 	gtk_text_view_set_editable (GTK_TEXT_VIEW (descTextView), FALSE);
 	gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (descTextView), GTK_WRAP_WORD);
+	gtk_widget_set_can_focus (descTextView, TRUE);
 
 	return descTextView;
 }
@@ -309,6 +313,7 @@ static GtkWidget* main_create_usage_bar ()
 	gtk_level_bar_set_min_value (GTK_LEVEL_BAR (usageBar), 0);
 	gtk_level_bar_set_max_value (GTK_LEVEL_BAR (usageBar), 5);
 	gtk_level_bar_set_mode (GTK_LEVEL_BAR (usageBar), GTK_LEVEL_BAR_MODE_DISCRETE);
+//	gtk_widget_set_can_focus (usageBar, TRUE);
 	return usageBar;
 }
 
@@ -325,6 +330,7 @@ static GtkWidget* main_create_participants_text_view ()
 	gtk_text_view_set_left_margin(GTK_TEXT_VIEW (partTextView), 5);
 	gtk_text_view_set_right_margin(GTK_TEXT_VIEW (partTextView), 5);
 	gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW (partTextView), 5);
+	gtk_widget_set_can_focus (partTextView, TRUE);
 	return partTextView;
 }
 
@@ -345,6 +351,7 @@ static GtkWidget* main_create_usage_cases_text_view ()
 	gtk_text_view_set_left_margin(GTK_TEXT_VIEW (uCasesTextView), uCasesTextViewLeftMargin);
 	gtk_text_view_set_right_margin(GTK_TEXT_VIEW (uCasesTextView), uCasesTextViewRightMargin);
 	gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW (uCasesTextView), uCasesTextViewBottomMargin);
+	gtk_widget_set_can_focus (uCasesTextView, TRUE);
 	return uCasesTextView;
 }
 
@@ -434,6 +441,9 @@ static void mainWindow_process_tree_view_selected_item (GtkTreeModel *model,
 		free (*retErrMsg);
 	}
 
+	// Star focus at tree view categories
+	gtk_widget_grab_focus (GTK_WIDGET (vi->treeView1));
+
 //	gtk_widget_set_size_request(GTK_WIDGET (wi->expander), 10, 10);
 
 	free (dbFullPath);
@@ -445,7 +455,7 @@ static void mainWindow_process_tree_view_selected_item (GtkTreeModel *model,
  * When a row is selected, the source view(s) and other widgets should be updated with code of selected
  * design pattern.
  */
-static void on_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column,
+static void on_row_activated_treeview_cats (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column,
 							  gpointer user_data)
 {
     GtkTreeModel *model;
@@ -463,7 +473,7 @@ static void on_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTree
 /*
  * Tree view button press event handler.
  */
-static gboolean on_button_press (GtkWidget *treeview,
+static gboolean on_button_press_treeview_cats (GtkWidget *treeview,
 					  GdkEventButton *event,
 					  gpointer user_data) {
     if (event->type == GDK_BUTTON_PRESS && event->button == 1) {  // Check for left button click
@@ -559,8 +569,8 @@ static void mainWindow_format_label (GtkLabel* label) {
 }
 
 // Callback function for the key-press-event signal
-static gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
-    if (event->keyval == GDK_KEY_Return) {
+static gboolean on_key_press_event_treeview_cats(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if ((event->keyval == GDK_KEY_Return) || (event->keyval == GDK_KEY_KP_Enter)) {
         GtkTreeView *treeview = GTK_TREE_VIEW(widget);
         GtkTreeSelection *selection = gtk_tree_view_get_selection(treeview);
         GtkTreeModel *model;
@@ -581,6 +591,111 @@ static gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpoint
 
 //        return TRUE;  // Event handled
     }
+    else  if (event->keyval ==  GDK_KEY_Tab) //  65289)//GDK_KEY_BackForward)
+    {
+    	struct viewInterface* vi = (struct viewInterface*)user_data;
+    	gtk_widget_grab_focus (GTK_WIDGET (vi->expander));
+    	return TRUE;
+    }
+
+    return FALSE;  // Event not handled. Let system handle it to avoid side effects.
+}
+
+// Callback function for the key-press-event signal in drop down themes
+static gboolean on_key_press_event_dropdown_themes (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+	if (event->type == GDK_KEY_PRESS) {
+		if (event->keyval == GDK_KEY_ISO_Left_Tab && (event->state & GDK_SHIFT_MASK)) {
+			// Handle Shift+Tab pressed (focus navigation backward)
+			// Perform actions, such as calling gtk_widget_grab_focus() on the previous widget
+			struct viewInterface* vi = (struct viewInterface*)user_data;
+			gtk_widget_grab_focus (GTK_WIDGET (vi->dpUCasesView));
+			return TRUE;
+		}
+	}
+
+    return FALSE;  // Event not handled. Let system handle it to avoid side effects.
+}
+
+// Callback function for the key-press-event signal in SourceView
+static gboolean on_key_press_event_source_view1(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if (event->keyval ==  GDK_KEY_Tab) //  65289)//GDK_KEY_BackForward)
+    {
+    	struct viewInterface* vi = (struct viewInterface*)user_data;
+    	gtk_widget_grab_focus (GTK_WIDGET (vi->dpPartsView));
+    	return TRUE;
+    }
+
+    return FALSE;  // Event not handled. Let system handle it to avoid side effects.
+}
+
+// Callback function for the key-press-event signal in expander
+static gboolean on_key_press_event_expander_dpDesc (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+//    if (event->keyval ==  GDK_KEY_Tab) //  65289)//GDK_KEY_BackForward)
+//    {
+//    	struct viewInterface* vi = (struct viewInterface*)user_data;
+//    	gtk_widget_grab_focus (GTK_WIDGET (vi->dpUCasesView));
+//    	return TRUE;
+//    }
+//    else
+	if (event->type == GDK_KEY_PRESS) {
+		if (event->keyval == GDK_KEY_ISO_Left_Tab && (event->state & GDK_SHIFT_MASK)) {
+			// Handle Shift+Tab pressed (focus navigation backward)
+			// Perform actions, such as calling gtk_widget_grab_focus() on the previous widget
+			struct viewInterface* vi = (struct viewInterface*)user_data;
+			gtk_widget_grab_focus (GTK_WIDGET (vi->treeView1));
+			return TRUE;
+		}
+	}
+
+    return FALSE;  // Event not handled. Let system handle it to avoid side effects.
+}
+
+// Callback function for the key-press-event signal in participants view
+static gboolean on_key_press_event_parts_view(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if (event->keyval ==  GDK_KEY_Tab) //  65289)//GDK_KEY_BackForward)
+    {
+    	struct viewInterface* vi = (struct viewInterface*)user_data;
+    	gtk_widget_grab_focus (GTK_WIDGET (vi->dpUCasesView));
+    	return TRUE;
+    }
+    else if (event->type == GDK_KEY_PRESS) {
+            if (event->keyval == GDK_KEY_ISO_Left_Tab && (event->state & GDK_SHIFT_MASK)) {
+                // Handle Shift+Tab pressed (focus navigation backward)
+                // Perform actions, such as calling gtk_widget_grab_focus() on the previous widget
+            	struct viewInterface* vi = (struct viewInterface*)user_data;
+    			gtk_widget_grab_focus (GTK_WIDGET (vi->sourceView1));
+    			return TRUE;
+            }
+        }
+
+
+    return FALSE;  // Event not handled. Let system handle it to avoid side effects.
+}
+
+// Callback function for the key-press-event signal in participants view
+static gboolean on_key_press_event_uCases_view(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if (event->keyval ==  GDK_KEY_Tab)
+    {
+    	struct viewInterface* vi = (struct viewInterface*)user_data;
+    	gtk_widget_grab_focus (GTK_WIDGET (vi->dropDownTheme));
+    	return TRUE;
+    }
+    else if (event->type == GDK_KEY_PRESS) {
+        if (event->keyval == GDK_KEY_ISO_Left_Tab && (event->state & GDK_SHIFT_MASK)) {
+            // Handle Shift+Tab pressed (focus navigation backward)
+            // Perform actions, such as calling gtk_widget_grab_focus() on the previous widget
+        	struct viewInterface* vi = (struct viewInterface*)user_data;
+			gtk_widget_grab_focus (GTK_WIDGET (vi->dpPartsView));
+			return TRUE;
+        }
+    }
+
+//    if (event->keyval ==  GDK_KEY_Back)
+//    {
+//    	struct viewInterface* vi = (struct viewInterface*)user_data;
+//    	gtk_widget_grab_focus (GTK_WIDGET (vi->dpPartsView));
+//    	return TRUE;
+//    }
 
     return FALSE;  // Event not handled. Let system handle it to avoid side effects.
 }
@@ -605,6 +720,10 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	const int hPaned1RightMargin = 5;
 	const int hPaned1BottomMargin = 5;
 
+	// Boxes containers should not have focus enabled.
+	// Don't do gtk_widget_set_can_focus() on boxes, because
+	// child widgets will never catch focus (tested with gtk3).
+
 	// Create app main window
 	window = gtk_application_window_new (app);
 	vi->mainWwindow = GTK_WINDOW (window);
@@ -619,6 +738,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Create window header bar
 	header = main_create_header_bar (vi);
 	gtk_window_set_titlebar (GTK_WINDOW (window), header);
+	vi->headerBar = GTK_HEADER_BAR (header);
 
 	// add title box to top level box
 	gtk_box_pack_start (GTK_BOX (toplevel_vbox), header_hbox, FALSE, FALSE, 0);
@@ -635,31 +755,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Add the GtkScrolledWindow to tree view
 	GtkWidget* scrolledWindow_treeView = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (scrolledWindow_treeView), GTK_WIDGET (vi->treeView1));
-
-	// ------- Source code --------------
-	// Create label for source code panel
-	GtkWidget* labelCode = gtk_label_new (MESSAGES_CODE_EXAMPLE);
-	mainWindow_format_label (GTK_LABEL (labelCode));
-
-	// Create label for code language name
-	GtkWidget* labelCodeLangName = gtk_label_new ("");
-	vi->dpCodeLangNameLabel = GTK_LABEL (labelCodeLangName);
-	mainWindow_format_label (GTK_LABEL (labelCodeLangName));
-
-	// Create horizontal box to pack example code and language name labels
-	GtkWidget* hBoxLabelExCode = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_box_pack_start (GTK_BOX (hBoxLabelExCode), labelCode,
-						FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (hBoxLabelExCode), GTK_WIDGET (vi->dpCodeLangNameLabel),
-						TRUE, TRUE, 0);
-
-	// Create a GtkSourceView
-	vi->sourceView1 = GTK_SOURCE_VIEW (main_create_source_view ());
-
-	// Add the GtkSourceView to a GtkScrolledWindow
-	GtkWidget* scrolledWindow_sourceView = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_margin_start ( GTK_WIDGET (scrolledWindow_sourceView), 5);
-	gtk_container_add (GTK_CONTAINER (scrolledWindow_sourceView), GTK_WIDGET (vi->sourceView1));
+//	gtk_widget_set_can_focus (scrolledWindow_treeView, TRUE);
 
 	// Create description expander
 	// Create an expander
@@ -678,9 +774,39 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Pack the TextView into the expander
 	gtk_container_add (GTK_CONTAINER (vi->expander), GTK_WIDGET (vi->dpDescView));
 
+	// ------- Source code --------------
+	// Create label for source code panel
+	GtkWidget* labelCode = gtk_label_new (MESSAGES_CODE_EXAMPLE);
+	mainWindow_format_label (GTK_LABEL (labelCode));
+
+	// Create label for code language name
+	GtkWidget* labelCodeLangName = gtk_label_new ("");
+	vi->dpCodeLangNameLabel = GTK_LABEL (labelCodeLangName);
+	mainWindow_format_label (GTK_LABEL (labelCodeLangName));
+
+	// Create horizontal box to pack example code and language name labels
+	GtkWidget* hBoxLabelExCode = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_box_pack_start (GTK_BOX (hBoxLabelExCode), labelCode,
+						FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hBoxLabelExCode), GTK_WIDGET (vi->dpCodeLangNameLabel),
+						TRUE, TRUE, 0);
+
+//	gtk_widget_set_can_focus (hBoxLabelExCode, TRUE);
+
+	// Create a GtkSourceView
+	vi->sourceView1 = GTK_SOURCE_VIEW (main_create_source_view ());
+
+	// Add the GtkSourceView to a GtkScrolledWindow
+	GtkWidget* scrolledWindow_sourceView = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_set_margin_start ( GTK_WIDGET (scrolledWindow_sourceView), 5);
+	gtk_container_add (GTK_CONTAINER (scrolledWindow_sourceView), GTK_WIDGET (vi->sourceView1));
+//	gtk_widget_set_can_focus (scrolledWindow_sourceView, TRUE);
+
+
 	// Create VBOX for hpaned child 2
 	GtkWidget* vBoxCode = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_set_homogeneous (GTK_BOX (vBoxCode), FALSE);
+//	gtk_widget_set_can_focus (vBoxCode, TRUE);
 
 	// Create GtkLevelBar
 	vi->dpUsageLevelBar = GTK_LEVEL_BAR (main_create_usage_bar ());
@@ -714,8 +840,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	vi->dpCodePaned = GTK_PANED (codePartPaned);
 
 	gtk_paned_set_wide_handle (GTK_PANED (codePartPaned), TRUE);
-//	gtk_paned_set_position (GTK_PANED (codePartPaned), 200);
-	gtk_widget_set_can_focus (codePartPaned, TRUE);
+//	gtk_widget_set_can_focus (codePartPaned, TRUE);
 
 	vi->dpPartsView = GTK_TEXT_VIEW (main_create_participants_text_view ());
 
@@ -726,6 +851,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Add the GtkTextView to a GtkScrolledWindow
 	GtkWidget* scrolledWindow_partView = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (scrolledWindow_partView), GTK_WIDGET (vi->dpPartsView));
+//	gtk_widget_set_can_focus (scrolledWindow_partView, TRUE);
 
 	gtk_widget_set_margin_start (GTK_WIDGET (hpaned1), hPaned1LeftMargin);
 	gtk_widget_set_margin_bottom (GTK_WIDGET (hpaned1), hPaned1BottomMargin);
@@ -736,6 +862,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	gtk_box_pack_start (GTK_BOX (partVbox), GTK_WIDGET (labelPart), FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (partVbox), GTK_WIDGET (scrolledWindow_partView),
 											TRUE, TRUE, 0);
+//	gtk_widget_set_can_focus (partVbox, TRUE);
 
 	// Create participants/usage cases paned container
 	GtkWidget* partCasesPaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
@@ -743,7 +870,7 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 
 	gtk_paned_set_wide_handle (GTK_PANED (partCasesPaned), TRUE);
 //	gtk_paned_set_position (GTK_PANED (partCasesPaned), 150);
-	gtk_widget_set_can_focus (partCasesPaned, TRUE);
+//	gtk_widget_set_can_focus (partCasesPaned, TRUE);
 
 	// ------- Usage Cases --------------
 	// Create label for usage cases panel
@@ -755,12 +882,22 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Add the GtkTextView of usage cases to a GtkScrolledWindow
 	GtkWidget* scrolledWindowCasesView = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (scrolledWindowCasesView), GTK_WIDGET (vi->dpUCasesView));
+//	gtk_widget_set_can_focus (scrolledWindowCasesView, TRUE);
 
 	// Create vbox for usage cases panel and add label and usage cases scrolled window
 	GtkWidget* casesVbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start (GTK_BOX (casesVbox), GTK_WIDGET (labelCases), FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (casesVbox), GTK_WIDGET (scrolledWindowCasesView),
 												TRUE, TRUE, 0);
+//	gtk_widget_set_can_focus (casesVbox, TRUE);
+
+	// Add tree view and right paned container to outer paned panel
+	//	gtk_paned_add1 (GTK_PANED (hpaned1), scrolledWindow_treeView);
+	gtk_paned_pack1 (GTK_PANED (hpaned1), scrolledWindow_treeView, FALSE, TRUE);
+	gtk_paned_pack2 (GTK_PANED (hpaned1), GTK_WIDGET (codePartPaned), TRUE, TRUE);
+
+	gtk_paned_pack1 (GTK_PANED (codePartPaned), GTK_WIDGET (vBoxCode), TRUE, TRUE);
+	gtk_paned_pack2 (GTK_PANED (codePartPaned), GTK_WIDGET (partCasesPaned), TRUE, TRUE);
 
 	// Add participants and usage cases vertical boxes to host paned
 	gtk_paned_pack1 (GTK_PANED (partCasesPaned), GTK_WIDGET (partVbox), FALSE, TRUE);
@@ -769,16 +906,6 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 	// Add code box and part/cases paned to host paned
 //	gtk_paned_add1 (GTK_PANED (codePartPaned), GTK_WIDGET (vBoxCode));
 //	gtk_paned_add2 (GTK_PANED (codePartPaned), GTK_WIDGET (partCasesPaned));
-
-	gtk_paned_pack1 (GTK_PANED (codePartPaned), GTK_WIDGET (vBoxCode), TRUE, TRUE);
-	gtk_paned_pack2 (GTK_PANED (codePartPaned), GTK_WIDGET (partCasesPaned), TRUE, TRUE);
-
-	// Add tree view and right paned container to outer paned panel
-//	gtk_paned_add1 (GTK_PANED (hpaned1), scrolledWindow_treeView);
-	gtk_paned_pack1 (GTK_PANED (hpaned1), scrolledWindow_treeView, FALSE, TRUE);
-
-//	gtk_paned_add2 (GTK_PANED (hpaned1), GTK_WIDGET (codePartPaned));
-	gtk_paned_pack2 (GTK_PANED (hpaned1), GTK_WIDGET (codePartPaned), TRUE, TRUE);
 
 	// add paned panel to top level vbox
 	gtk_box_pack_end (GTK_BOX (toplevel_vbox), hpaned1, TRUE, TRUE, 0);
@@ -816,15 +943,52 @@ void mainWindow_create_main_window (GtkApplication* app, struct viewInterface* v
 
 	free (retErrMsg);
 
-	// Connect the row-activated signal
+//	// Set focus order
+//	GtkWidget *focus_chain[] = { GTK_WIDGET (vi->treeView1), GTK_WIDGET (vi->expander),
+//								 GTK_WIDGET (vi->sourceView1),
+//								 GTK_WIDGET (vi->dpPartsView),
+//								 GTK_WIDGET (vi->dpUCasesView) };
+//	gtk_container_set_focus_chain (GTK_CONTAINER(window), focus_chain);
+//  gtk_container_set_focus_chain() function was deprecated in Gtk3 so we will not use it.
+
+	/*
+	 * Gtk made a mess with focus order. Nested paned windows makes layout
+	 * a bit complex, so we need to handle focus order manually.
+	 * In a pragmatic way we handle "key-press-event" event for widgets that need
+	 * focus and capture TAB and SHIFT_TAB keys.
+	 */
+
+	// Connect the key-press-event signal to the callback function for drop down themes selector
+	g_signal_connect (vi->dropDownTheme, "key-press-event", G_CALLBACK(on_key_press_event_dropdown_themes),
+					  vi);
+
+	// Connect the row-activated signal for treeview
 	g_signal_connect (vi->treeView1, "row-activated",
-					  G_CALLBACK (on_row_activated), vi);
+					  G_CALLBACK (on_row_activated_treeview_cats), vi);
 
-	// Connect the key-press-event signal to the callback function
-	g_signal_connect (vi->treeView1, "key-press-event", G_CALLBACK(on_key_press_event), NULL);
+	// Connect the key-press-event signal to the callback function for treeview
+	g_signal_connect (vi->treeView1, "key-press-event", G_CALLBACK(on_key_press_event_treeview_cats),
+					  vi); // NULL );
 
-	// Connect the row-activated signal
+	// Connect the button-press-event signal for treeview
 	g_signal_connect (vi->treeView1, "button-press-event",
-					  G_CALLBACK (on_button_press), vi);
+					  G_CALLBACK (on_button_press_treeview_cats), vi);
+
+	// Connect the key-press-event signal to the callback function for expander
+	g_signal_connect (vi->expander, "key-press-event", G_CALLBACK(on_key_press_event_expander_dpDesc),
+					  vi); // NULL );
+
+	// Connect the key-press-event signal to the callback function for source view 1
+	g_signal_connect (vi->sourceView1, "key-press-event", G_CALLBACK(on_key_press_event_source_view1),
+					  vi); // NULL );
+
+	// Connect the key-press-event signal to the callback function for participants view
+	g_signal_connect (vi->dpPartsView, "key-press-event", G_CALLBACK(on_key_press_event_parts_view),
+					  vi); // NULL );
+
+	// Connect the key-press-event signal to the callback function for Usage cases view
+	g_signal_connect (vi->dpUCasesView, "key-press-event", G_CALLBACK(on_key_press_event_uCases_view),
+					  vi); // NULL );
+
 }
 

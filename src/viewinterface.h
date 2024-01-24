@@ -37,6 +37,8 @@
 	 */
 	struct viewInterface {
 		GtkWindow* 		mainWwindow;
+		GtkHeaderBar* 	headerBar;
+		GtkComboBox* 	dropDownTheme;
 		GtkSourceView* 	sourceView1;
 		GtkExpander* 	expander;
 		GtkTreeView* 	treeView1;
@@ -78,6 +80,11 @@
 	 * Sets the source language for the GtkSourceView.
 	 */
 	void vi_set_source_lang (GtkSourceView* sView, char* langName);
+
+	/*
+	 * Sets cursor at start position of a given text buffer.
+	 */
+	void vi_set_text_buffer_cursor_at_start (GtkTextBuffer* buff);
 
 	/*
 	 * Sets the content of a given source view.

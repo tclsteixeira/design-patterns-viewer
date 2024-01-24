@@ -45,6 +45,9 @@ void dpucasescontroller_update_text_view (struct viewInterface* wi, struct table
 
 			row = row->next;
 		}
+
+		// Put cursor at start
+		vi_set_text_buffer_cursor_at_start (gtk_text_view_get_buffer (wi->dpUCasesView));
 	}
 
 	row = NULL;

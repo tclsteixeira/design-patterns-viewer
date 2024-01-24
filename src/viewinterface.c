@@ -102,12 +102,22 @@ void vi_set_source_lang (GtkSourceView* sView, char* langName) {
 }
 
 /*
+ * Sets cursor at start position of a given text buffer.
+ */
+void vi_set_text_buffer_cursor_at_start (GtkTextBuffer* buff) {
+	GtkTextIter iter;
+	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buff), &iter);
+	gtk_text_buffer_place_cursor (GTK_TEXT_BUFFER (buff), &iter);
+}
+
+/*
  * Sets the content of a given source view.
  */
 void vi_set_source_view_content (GtkSourceView* sv, char* content)
 {
 	GtkSourceBuffer* sBuff = (GtkSourceBuffer*)gtk_text_view_get_buffer (GTK_TEXT_VIEW (sv));
 	gtk_text_buffer_set_text ( GTK_TEXT_BUFFER(sBuff), content, -1);
+	vi_set_text_buffer_cursor_at_start (GTK_TEXT_BUFFER (sBuff));
 }
 
 /*
@@ -124,6 +134,9 @@ void vi_set_text_view_content (GtkTextView* tv, const char* content, gboolean is
 	}
 	else
 		gtk_text_buffer_set_text (tvBuff, content, -1);
+
+	// Put cursor at start
+	vi_set_text_buffer_cursor_at_start (tvBuff);
 }
 
 /*
